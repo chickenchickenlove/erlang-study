@@ -21,6 +21,7 @@ important() ->
       [Message | important()]
   after 0 ->
     normal()
+    % [] % 아무것도 받지 않을 경우.
   end.
 
 normal() ->
