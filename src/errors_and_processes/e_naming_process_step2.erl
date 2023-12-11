@@ -3,30 +3,23 @@
 %%% @doc
 %%%
 %%% @end
-%%% Created : 10. 12월 2023 오후 6:25
+%%% Created : 11. 12월 2023 오후 3:37
 %%%-------------------------------------------------------------------
--module(e_naming_process).
+-module(e_naming_process_step2).
 -compile(export_all).
-
-%% API
--export([]).
-
+% 이 경우 critic 프로세스가 죽었을 때, 살려주지만 Pid가 매번 바뀜.
 start_critic() ->
-  spawn(?MODULE, supervisor_critic, []).
+  spawn(?MODULE, restarter, []).
 
-supervisor_critic() ->
+
+restarter() ->
   process_flag(trap_exit, true),
-  Pid = spawn_link(?MODULE, critic, []),
-  erlang:register(critic, Pid),
+  spawn_link(?MODULE, critic, []),
   receive
-    {'EXIT', _Pid, normal} -> ok;
-    {'EXIT', _Pid, shutdown} -> ok;
-    {'EXIT', _Pid, _} ->
-      io:format("Critic process died. we restart it. ~n"),
-      supervisor_critic()
+    {'EXIT', Pid, normal} -> ok;
+    {'EXIT', Pid, shutdown} -> ok;
+    {'EXIT', Pid, _} -> restarter()
   end.
-
-
 
 
 judge(Pid, Band, Album) ->

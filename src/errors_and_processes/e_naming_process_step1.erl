@@ -3,31 +3,14 @@
 %%% @doc
 %%%
 %%% @end
-%%% Created : 10. 12월 2023 오후 6:25
+%%% Created : 11. 12월 2023 오후 3:37
 %%%-------------------------------------------------------------------
--module(e_naming_process).
+-module(e_naming_process_step1).
 -compile(export_all).
 
-%% API
--export([]).
-
+% 이 경우 critic 프로세스가 죽었을 때, 살려주는 녀석이 없음.
 start_critic() ->
-  spawn(?MODULE, supervisor_critic, []).
-
-supervisor_critic() ->
-  process_flag(trap_exit, true),
-  Pid = spawn_link(?MODULE, critic, []),
-  erlang:register(critic, Pid),
-  receive
-    {'EXIT', _Pid, normal} -> ok;
-    {'EXIT', _Pid, shutdown} -> ok;
-    {'EXIT', _Pid, _} ->
-      io:format("Critic process died. we restart it. ~n"),
-      supervisor_critic()
-  end.
-
-
-
+  spawn(?MODULE, critic, []).
 
 judge(Pid, Band, Album) ->
   Pid ! {self(), {Band, Album}},
