@@ -14,7 +14,8 @@ start_critic() ->
 
 restarter() ->
   process_flag(trap_exit, true),
-  spawn_link(?MODULE, critic, []),
+  Pid = spawn_link(?MODULE, critic, []),
+  io:format("critic Process Pid ~p~n", [Pid]),
   receive
     {'EXIT', Pid, normal} -> ok;
     {'EXIT', Pid, shutdown} -> ok;
