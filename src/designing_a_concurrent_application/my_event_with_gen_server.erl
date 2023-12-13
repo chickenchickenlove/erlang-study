@@ -6,7 +6,7 @@
 %%% @end
 %%% Created : 13. 12월 2023 오후 12:19
 %%%-------------------------------------------------------------------
--module(my_event).
+-module(my_event_with_gen_server).
 -author("ojt90").
 
 %% API
@@ -48,7 +48,7 @@ loop(S = #state{server=Server, to_go=[T|Next]}) ->
       Server ! {Ref, ok}
   after T * 1000 ->
     if
-      Next =:= [] -> Server ! {done, S#state.name};
+      Next =:= [] -> gen_server:call(Server, {done, S#state.name});
       Next =/= [] -> loop(S#state{to_go=Next})
     end
   end.
