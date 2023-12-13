@@ -28,7 +28,6 @@ init(Server, EventName, Delay) ->
     name=EventName,
     to_go=normalize(Delay)}).
 
-
 cancel(Pid) ->
   Ref = erlang:monitor(process, Pid),
   Pid ! {self(), Ref, cancel},
@@ -39,8 +38,6 @@ cancel(Pid) ->
     {'DOWN', Ref, process, Pid, _Reason} ->
       ok
   end.
-
-
 
 loop(S = #state{server=Server, to_go=[T|Next]}) ->
   receive

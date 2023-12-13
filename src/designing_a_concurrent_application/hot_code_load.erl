@@ -4,9 +4,9 @@
 %%% @doc
 %%%
 %%% @end
-%%% Created : 12. 12월 2023 오후 4:05
+%%% Created : 13. 12월 2023 오후 3:30
 %%%-------------------------------------------------------------------
--module(kitty_gen_server).
+-module(hot_code_load).
 -author("ojt90").
 
 %% API
