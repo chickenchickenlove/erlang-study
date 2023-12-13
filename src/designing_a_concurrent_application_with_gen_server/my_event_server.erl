@@ -57,8 +57,8 @@ loop(State) ->
           send_to_clients({
             done,
             E#event.name,
-            E#event.description,
-            State#state.clients}),
+            E#event.description},
+            State#state.clients),
           NewEvents = orddict:erase(Name, State#state.events),
           loop(State#state{events=NewEvents});
         error ->
@@ -72,7 +72,7 @@ loop(State) ->
     Unknown ->
       io:format("Unknown Message come. ~p~n", [Unknown]),
       loop(State)
-  end
+  end.
 
 send_to_clients(Msg, ClientDict) ->
   orddict:map(fun(_Ref, Pid) -> Pid ! Msg end, ClientDict).
@@ -135,3 +135,4 @@ listen(Delay) ->
   after Delay ->
     []
   end.
+
