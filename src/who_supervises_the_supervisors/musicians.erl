@@ -9,8 +9,10 @@
 -behavior(gen_server).
 
 %% API
--export([]).
 -export([start_link/2, stop/1]).
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2, code_change/3, terminate/2]).
+
+
 
 -record(state, {name="", role, skill=good}).
 % Macro. use ?DELAY.
@@ -34,9 +36,9 @@ init([Role, Skill]) ->
 
 
 pick_name() ->
-  lists:nth(random:uniform(), firstnames())
+  lists:nth(random:uniform(10), firstnames())
   ++ " " ++
-  lists:nth(random:uniform(), lastnames()).
+  lists:nth(random:uniform(10), lastnames()).
 
 firstnames() ->
   ["Valerie", "Arnold", "Carlos", "Dorothy", "Keesha",
@@ -71,8 +73,20 @@ handle_info(timeout, S = #state{name=N, skill=bad}) ->
       {noreply, S, ?DELAY}
   end;
 handle_info(_Message, S) ->
+  io:format("HERE~n"),
   {noreply, S, ?DELAY}.
 
 
 
+terminate(normal, S) ->
+  io:format("~s left the room (~s)~n", [S#state.name, S#state.role]);
+terminate(bad_note, S) ->
+  io:format("~s sucks! kicked that member out of the band! (~s)~n"), [S#state.name, S#state.role];
+terminate(shutdown, S) ->
+  io:format("The manager is mad and fired the whole band! ~s just got back to playing in the subway~n", [S#state.name]);
+terminate(_Reason, S) ->
+  io:format("~s has been kicked out (~s)~n", [S#state.name, S#state.role]).
 
+
+code_change(_OldVsn, State, _Extra) ->
+  {ok, State}.
