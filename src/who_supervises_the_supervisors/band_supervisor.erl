@@ -28,13 +28,18 @@ init({RestartStrategy, MaxRestart, MaxTime}) ->
     #{strategy => RestartStrategy,
       intensity => MaxRestart,
       period => MaxTime},
-  ChildSpecs = [
-    #{id => singer,
-      start => {musicians, start_link, [singer, good]},
-      restart => permanent,
-      shutdown => 1000,
-      type => worker,
-      modules => [musicians]},
+  ChildSpecs = get_child_spec(),
+  {ok, {SupervisorFlags, ChildSpecs}}.
+
+
+get_child_spec() ->
+  [
+    #{id => singer, % ChildId
+      start => {musicians, start_link, [singer, good]}, % Start Function : 자식 프로세스 시작
+      restart => permanent, % Restart : permanent, temporary, transient
+      shutdown => 1000, % Shutdown : Graceful Period
+      type => worker, % Node Type : Worker / Supervisord
+      modules => [musicians]}, % Modules : 참조하는 모듈
     #{id => bass,
       start => {musicians, start_link, [bass, good]},
       restart => temporary,
@@ -56,5 +61,6 @@ init({RestartStrategy, MaxRestart, MaxTime}) ->
       type => worker,
       modules => [musicians]
     }
-  ],
-  {ok, {SupervisorFlags, ChildSpecs}}.
+  ].
+
+
