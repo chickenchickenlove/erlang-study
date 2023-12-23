@@ -28,8 +28,8 @@ init({Name, Limit, MFA}) ->
     [
       %pool_server
       #{
-        id => Name,
-        start => [pool_server, start_link, [Name, Limit, self(), MFA]],
+        id => serv,
+        start => {pool_server, start_link, [Name, Limit, self(), MFA]},
         restart => permanent,
         shutdown => 5000,
         type => worker,

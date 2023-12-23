@@ -8,7 +8,7 @@
 -module(pool_worker_sup).
 -behaviour(supervisor).
 %% API
--export([init/1]).
+-export([init/1, start_link/1]).
 
 
 start_link(MFA = {_, _, _}) ->

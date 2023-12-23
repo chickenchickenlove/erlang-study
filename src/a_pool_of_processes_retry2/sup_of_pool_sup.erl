@@ -27,7 +27,7 @@ start_pool(Name, Limit, MFA) ->
   ChildSpec =
     #{
       id => Name,
-      start => [pool_sup, start_link, [Name, Limit, MFA]],
+      start => {pool_sup, start_link, [Name, Limit, MFA]},
       restart => permanent,
       shutdown => 10500,
       type => supervisor,

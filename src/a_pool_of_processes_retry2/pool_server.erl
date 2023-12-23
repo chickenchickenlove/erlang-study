@@ -7,6 +7,14 @@
 %%%-------------------------------------------------------------------
 -module(pool_server).
 -behaviour(gen_server).
+-define(SPEC(MFA),
+  {worker_sup,
+    {pool_worker_sup, start_link, [MFA]},
+    temporary,
+    10000,
+    supervisor,
+    [pool_worker_sup]}).
+
 
 %%start => [pool_server, start_link, [Name, Limit, self(), MFA]],
 -record(state, {limit=0, sup, refs=gb_sets:empty(), queue=queue:new()}).
@@ -24,7 +32,7 @@ start_link(Name, Limit, Sup, MFA) when is_atom(Name), is_integer(Limit)->
   gen_server:start_link({local, Name}, ?MODULE, {Limit, Sup, MFA}, []).
 
 
-init([Limit, Sup, MFA]) ->
+init({Limit, Sup, MFA}) ->
   self() ! {start_worker_supervisor, {Sup, MFA}},
   {ok, #state{limit=Limit, sup=Sup}}.
 
@@ -47,7 +55,7 @@ handle_call({run, Args}, _From, S = #state{limit=N, sup=Sup, refs=Refs}) when N 
   {ok, Pid} = supervisor:start_child(Sup, Args),
   Ref = erlang:monitor(process, Pid),
   {reply, {ok, Pid}, S#state{limit=N-1, refs=gb_sets:add(Ref, Refs)}};
-handle_call({run, _Args}, _From, S = #state{limit=N-1, sup=Sup, refs=Refs}) when N =< 0 ->
+handle_call({run, _Args}, _From, S = #state{limit=N}) when N =< 0 ->
   {reply, noalloc, S};
 handle_call({sync, Args}, _From, S = #state{limit=N, sup=Sup, refs=Refs}) when N > 0 ->
   {ok, Pid} = supervisor:start_child(Sup, Args),
@@ -71,12 +79,12 @@ handle_cast(_Msg, S) ->
   {noreply, S}.
 
 handle_info({start_worker_supervisor, {Sup, MFA}}, S)->
-  {ok, Pid} = supervisor:start_child(Sup, MFA),
+  {ok, Pid} = supervisor:start_child(Sup, ?SPEC(MFA)),
   {noreply, S#state{sup = Pid}};
 handle_info({'DOWN', Ref, process, _Pid, _}, S = #state{refs=Refs}) ->
   case gb_sets:is_element(Ref, Refs) of
     true -> handle_down_worker(Ref, S);
-    false -> S;
+    false -> S
   end;
 handle_info(Msg, S) ->
   io:format("Unknown Msg : ~p.~n", [Msg]),
@@ -97,7 +105,7 @@ handle_down_worker(Ref, S = #state{limit=L, sup=Sup, refs=Refs, queue=Q}) ->
       NewRefs = gb_sets:insert(NewRef, gb_sets:delete(Ref, Refs)),
       {noreply, S#state{refs=NewRefs}};
     {empty, _} ->
-      {noreply, S#state{limit = L+1, refs = gb_sets:delete(Ref, Refs)}};
+      {noreply, S#state{limit = L+1, refs = gb_sets:delete(Ref, Refs)}}
   end.
 
 
