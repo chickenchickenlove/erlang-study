@@ -1,4 +1,8 @@
-{'src/*/*', [debug_info,
+{'src/*', [debug_info,
            {i, "src"},
-           {i, "include"},
-           {outdir, "ebin"}]}.
+           {i, "include/"},
+           {outdir, "ebin/"}]}.
+{'test/*', [debug_info,
+           {i, "src"},
+           {i, "include/"},
+           {outdir, "ebin/"}]}.
