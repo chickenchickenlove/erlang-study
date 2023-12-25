@@ -38,3 +38,6 @@ sync_queue(Name, Args) ->
 
 async_queue(Name, Args) ->
   pool_server:async_queue(Name, Args).
+
+hello_test() ->
+  io:format("Hello Test~n").
