@@ -16,10 +16,12 @@ start() ->
   spawn(fun() -> bark() end).
 
 
+% Request API
 squirrel(Pid) -> Pid ! squirrel.
 
 pet(Pid) -> Pid ! pet.
 
+% State Local Method.
 bark() ->
   io:format("Dog says: BARK! BARK!~n"),
   receive

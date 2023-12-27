@@ -13,7 +13,7 @@
 
 %% API
 -export([init/1, handle_event/3, handle_sync_event/4]).
--export([event/2, dont_give_crap/2, dont_give_crap/3]).
+-export([event/2, dont_give_crap/3]).
 
 
 init([]) ->
