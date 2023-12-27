@@ -10,11 +10,12 @@
 -author("ojt90").
 -behaviour(gen_fsm).
 
-
 %% API
 -export([init/1, handle_event/3, handle_sync_event/4]).
--export([event/2, dont_give_crap/3]).
+-export([event/2, dont_give_crap/3, start_link/0]).
 
+start_link() ->
+  gen_fsm:start_link(?MODULE, [], []).
 
 init([]) ->
   {ok, dont_give_crap, []}.

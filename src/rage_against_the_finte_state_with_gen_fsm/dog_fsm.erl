@@ -15,6 +15,10 @@
 -export([init/1, handle_event/3, handle_sync_event/4]).
 -export([bark/2, wag_tail/2, sit/2, handle_info/2]).
 -export([squirrel/1, pet/1]).
+-export([start_link/0]).
+
+start_link() ->
+  gen_fsm:start_link(?MODULE, [], []).
 
 init([]) ->
   {ok, bark, [], 2000}.
