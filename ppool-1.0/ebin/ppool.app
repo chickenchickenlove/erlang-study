@@ -14,7 +14,7 @@
         kernel,
         stdlib
     ]},
-    {mod, {sup_of_pool_sup, []}},
+    {mod, {pool_api, []}},
     {env, []},
     {modules, [sup_of_pool_sup, pool_api, pool_server, pool_sup, pool_worker_sup]}
 ]}.
