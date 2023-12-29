@@ -39,6 +39,7 @@ init({Limit, Sup, MFA}) ->
 
 
 run(Name, Args) ->
+  io:format("ASH TEST RUN HERE~n"),
   gen_server:call(Name, {run, Args}).
 
 sync_queue(Name, Args) ->

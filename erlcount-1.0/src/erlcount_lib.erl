@@ -56,8 +56,8 @@ enqueue_many(Path, Files, Queue) ->
 regex_count(Re, Str) ->
   case re:run(Str, Re, [global]) of
     nomatch -> 0;
-    {mathc, List} -> length(List)
+    {match, List} -> length(List)
   end.
 
 
-
+%%  erl -env ERL_LIBS "." -erlcount directory '"C:\\Program Files\\Erlang OTP\\lib"'

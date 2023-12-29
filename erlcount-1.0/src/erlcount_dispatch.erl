@@ -29,7 +29,7 @@ init([]) ->
   {ok, Re} = application:get_env(regex),
   {ok, Dir} = application:get_env(directory),
   {ok, MaxFiles} = application:get_env(max_files),
-  ppool:start_pool(?POOL, MaxFiles, {erlcount_counter, start_link, []}),
+  pool_api:start_pool(?POOL, MaxFiles, {erlcount_counter, start_link, []}),
   case lists:all(fun valid_regex/1, Re) of
     true ->
       self() ! {start, Dir},
@@ -55,7 +55,7 @@ handle_info({start, Dir}, State, Data) ->
 dispatching({continue, File, Continuation}, Data = #data{regex=Re, refs=Refs}) ->
   F = fun({Regex, _Count}, NewRefs) ->
     Ref = make_ref(),
-    ppool:async_queue(?POOL, [self(), Ref, File, Regex]),
+    pool_api:async_queue(?POOL, [self(), Ref, File, Regex]),
     [Ref|NewRefs]
       end,
   NewRefs = lists:foldl(F, Refs, Re),
